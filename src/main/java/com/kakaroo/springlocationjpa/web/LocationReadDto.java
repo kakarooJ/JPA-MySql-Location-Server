@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public class LocationReadDto {
 	private Long id;
-	private LocalDateTime time;
+	private String time;
 	private Double latitude;
 	private Double longitude;
 	

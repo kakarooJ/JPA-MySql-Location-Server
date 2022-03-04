@@ -42,5 +42,4 @@ public class LocationService {
 		repository.deleteAll();
 		return repository.count();
 	}
-
 }

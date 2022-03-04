@@ -29,7 +29,7 @@ public class LocationApiController {
 	public String init() {
 		Double latitude = 37.3863871;
 		Double longitude = 126.9648526;
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 1; i++) {
 			
 			//java.sql.TimeStamp
 			SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
@@ -37,18 +37,22 @@ public class LocationApiController {
 			String today = formatter.format(cal.getTime());
 			
 			Timestamp ts = Timestamp.valueOf(today);
-			System.out.println("timestamp : "+ts);		
+			System.out.println("timestamp : "+ts);			
 			
-			LocalDateTime ldt = ts.toLocalDateTime();
-			System.out.println("SQL type of timestamp : "+ldt);
+			String time = ts.toString();
+			String mTime = time.substring(0, time.length()-2);
+			System.out.println("timestamp str : "+mTime);
+			
+			//LocalDateTime ldt = ts.toLocalDateTime();
+			//System.out.println("SQL type of timestamp : "+ldt);
 						
-			Double reviseValueA = i * 0.001;
-			Double reviseValueB = i * 0.002;			
+			Double reviseValueA = (int) (Math.random()*20)*0.001;//i * 0.001;
+			Double reviseValueB = (int) (Math.random()*12)*0.001;//i * 0.002;			
 			repository
-					.save(LocationEntity.builder().time(ldt).latitude(latitude+reviseValueA).longitude(longitude+reviseValueB).build());
+					.save(LocationEntity.builder().time(mTime).latitude(latitude+reviseValueA).longitude(longitude+reviseValueB).build());
 			
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -72,7 +76,7 @@ public class LocationApiController {
 		return locationService.delete(id);
 	}
 	
-	@DeleteMapping("/deleteall")
+	@DeleteMapping("/delete/all")
 	public Long deleteAll() {
 		return locationService.deleteAll();
 	}

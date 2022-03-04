@@ -1,8 +1,5 @@
 package com.kakaroo.springlocationjpa.entity;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,12 +16,12 @@ public class LocationEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private LocalDateTime time;
+	private String time;
 	private Double latitude;
 	private Double longitude;
 	
 	@Builder
-	public LocationEntity(Long id, LocalDateTime time, Double latitude, Double longitude) {
+	public LocationEntity(Long id, String time, Double latitude, Double longitude) {
 		this.id = id;
 		this.time = time;
 		this.latitude = latitude;

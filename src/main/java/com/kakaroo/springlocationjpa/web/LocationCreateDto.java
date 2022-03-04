@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class LocationCreateDto {
-	private LocalDateTime time;
+	private String time;
 	private Double latitude;
 	private Double longitude;
 	
 	@Builder
-	public LocationCreateDto(LocalDateTime time, Double latitude, Double longitude) {
+	public LocationCreateDto(String time, Double latitude, Double longitude) {
 		this.time = time;
 		this.latitude = latitude;
 		this.longitude = longitude;
