@@ -28,8 +28,12 @@ public class LocationApiController {
 	
 	@GetMapping("/")
 	public String init() {
-		Double latitude = 37.3863871;
-		Double longitude = 126.9648526;
+		Double latitude = 37.3863777;
+		Double longitude = 126.9648777;
+		String mTime = "";
+		Double reviseValueA = 0d;
+		Double reviseValueB = 0d;
+		
 		for (int i = 0; i < 1; i++) {
 			
 			//java.sql.TimeStamp
@@ -41,13 +45,13 @@ public class LocationApiController {
 			//System.out.println("timestamp : "+ts);
 			
 			String time = ts.toString();
-			String mTime = time.substring(0, time.length()-2);
+			mTime = time.substring(0, time.length()-2);
 						
 			//LocalDateTime ldt = ts.toLocalDateTime();
 			//System.out.println("SQL type of timestamp : "+ldt);
 						
-			Double reviseValueA = (int) (Math.random()*20)*0.001;//i * 0.001;
-			Double reviseValueB = (int) (Math.random()*12)*0.001;//i * 0.002;
+			reviseValueA = (int) (Math.random()*20)*0.001;//i * 0.001;
+			reviseValueB = (int) (Math.random()*12)*0.001;//i * 0.002;
 			
 			System.out.println("<item save> time:"+mTime +", latitude:"+(latitude+reviseValueA)+", longitude:"+(longitude+reviseValueB));
 			
@@ -61,7 +65,8 @@ public class LocationApiController {
 				e.printStackTrace();
 			}
 		}
-		return "Default item is inserted";
+
+		return "<item save> time:"+mTime +", latitude:"+(latitude+reviseValueA)+", longitude:"+(longitude+reviseValueB);
 	}
 	
 	@PostMapping("/post")
