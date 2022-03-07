@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -28,8 +29,8 @@ public class LocationApiController {
 	
 	@GetMapping("/")
 	public String init() {
-		Double latitude = 37.3863777;
-		Double longitude = 126.9648777;
+		Double latitude = 37.3898897;
+		Double longitude = 126.9593416;
 		String mTime = "";
 		Double reviseValueA = 0d;
 		Double reviseValueB = 0d;
@@ -38,8 +39,10 @@ public class LocationApiController {
 			
 			//java.sql.TimeStamp
 			SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
-			String today = formatter.format(cal.getTime());
+			Calendar cal = Calendar.getInstance();
+			Date date = cal.getTime();
+			formatter.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+			String today = formatter.format(date);
 			
 			Timestamp ts = Timestamp.valueOf(today);
 			//System.out.println("timestamp : "+ts);
@@ -50,10 +53,12 @@ public class LocationApiController {
 			//LocalDateTime ldt = ts.toLocalDateTime();
 			//System.out.println("SQL type of timestamp : "+ldt);
 						
-			reviseValueA = (int) (Math.random()*20)*0.001;//i * 0.001;
-			reviseValueB = (int) (Math.random()*12)*0.001;//i * 0.002;
+			reviseValueA = (int) Math.floor(Math.random()*20) *0.0003;//i * 0.001;
+			reviseValueB = (int) Math.floor(Math.random()*12) *0.0006;//i * 0.002;
 			
-			System.out.println("<item save> time:"+mTime +", latitude:"+(latitude+reviseValueA)+", longitude:"+(longitude+reviseValueB));
+			System.out.println("reviseValueA,reviseValueB: "+reviseValueA+","+reviseValueB);
+			
+			System.out.println("<item save> time:"+mTime +", latitude,longitude:"+(latitude+reviseValueA)+","+(longitude+reviseValueB));
 			
 			repository
 					.save(LocationEntity.builder().time(mTime).latitude(latitude+reviseValueA).longitude(longitude+reviseValueB).build());
@@ -66,7 +71,7 @@ public class LocationApiController {
 			}
 		}
 
-		return "<item save> time:"+mTime +", latitude:"+(latitude+reviseValueA)+", longitude:"+(longitude+reviseValueB);
+		return "<item save> time: "+mTime +", latitude,longitude: "+(latitude+reviseValueA)+","+(longitude+reviseValueB);
 	}
 	
 	@PostMapping("/post")
