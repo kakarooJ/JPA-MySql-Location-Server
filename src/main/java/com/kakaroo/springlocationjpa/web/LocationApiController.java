@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,22 +33,24 @@ public class LocationApiController {
 		for (int i = 0; i < 1; i++) {
 			
 			//java.sql.TimeStamp
-			SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
-			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
 			String today = formatter.format(cal.getTime());
 			
 			Timestamp ts = Timestamp.valueOf(today);
-			System.out.println("timestamp : "+ts);			
+			//System.out.println("timestamp : "+ts);
 			
 			String time = ts.toString();
 			String mTime = time.substring(0, time.length()-2);
-			System.out.println("timestamp str : "+mTime);
-			
+						
 			//LocalDateTime ldt = ts.toLocalDateTime();
 			//System.out.println("SQL type of timestamp : "+ldt);
 						
 			Double reviseValueA = (int) (Math.random()*20)*0.001;//i * 0.001;
-			Double reviseValueB = (int) (Math.random()*12)*0.001;//i * 0.002;			
+			Double reviseValueB = (int) (Math.random()*12)*0.001;//i * 0.002;
+			
+			System.out.println("<item save> time:"+mTime +", latitude:"+(latitude+reviseValueA)+", longitude:"+(longitude+reviseValueB));
+			
 			repository
 					.save(LocationEntity.builder().time(mTime).latitude(latitude+reviseValueA).longitude(longitude+reviseValueB).build());
 			
@@ -63,7 +66,9 @@ public class LocationApiController {
 	
 	@PostMapping("/post")
 	public Long create(@RequestBody LocationCreateDto createDto) {
-		return locationService.create(createDto);		
+		Long ret = locationService.create(createDto);
+		System.out.println("<post> id:"+ret +", time:"+createDto.getTime().toString() +", latitude:"+createDto.getLatitude().toString()+", longitude:"+createDto.getLongitude().toString());
+		return ret;		
 	}
 	
 	@GetMapping("/get/list")
@@ -73,11 +78,13 @@ public class LocationApiController {
 	
 	@DeleteMapping("/delete/{id}")
 	public Long delete(@PathVariable Long id) {
+		System.out.println("<delete> id:"+id);
 		return locationService.delete(id);
 	}
 	
 	@DeleteMapping("/delete/all")
 	public Long deleteAll() {
+		System.out.println("<deleteAll>");
 		return locationService.deleteAll();
 	}
 
