@@ -3,6 +3,9 @@ package com.kakaroo.springlocationjpa.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +20,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class LocationService {
 	
+	private final String tableName = "locations";
 	private final LocationRepository repository;
+
+	@PersistenceContext
+	private final EntityManager entityManager;
 	
 	@Transactional
 	public Long create(LocationCreateDto createDto) {
@@ -40,6 +47,12 @@ public class LocationService {
 	@Transactional
 	public Long deleteAll() {		
 		repository.deleteAll();
-		return repository.count();
-	}
+		Long count = repository.count();
+		
+		String jpql = "ALTER TABLE " + tableName +" AUTO_INCREMENT = 1";
+		entityManager.createNativeQuery(jpql).executeUpdate();
+				
+		return count;
+	}	
+	
 }
