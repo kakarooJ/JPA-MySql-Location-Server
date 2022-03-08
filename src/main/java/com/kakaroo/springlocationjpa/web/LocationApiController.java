@@ -2,7 +2,6 @@ package com.kakaroo.springlocationjpa.web;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -26,8 +25,8 @@ import lombok.RequiredArgsConstructor;
 public class LocationApiController {
 	private final LocationRepository repository;
 	private final LocationService locationService;
-	
-	@GetMapping("/")
+		
+	@GetMapping("/add")
 	public String init() {
 		Double latitude = 37.3898897;
 		Double longitude = 126.9593416;
@@ -55,9 +54,7 @@ public class LocationApiController {
 						
 			reviseValueA = (int) Math.floor(Math.random()*20) *0.0003;//i * 0.001;
 			reviseValueB = (int) Math.floor(Math.random()*12) *0.0006;//i * 0.002;
-			
-			System.out.println("reviseValueA,reviseValueB: "+reviseValueA+","+reviseValueB);
-			
+						
 			System.out.println("<item save> time:"+mTime +", latitude,longitude:"+(latitude+reviseValueA)+","+(longitude+reviseValueB));
 			
 			repository
@@ -93,9 +90,10 @@ public class LocationApiController {
 	}
 	
 	@DeleteMapping("/delete/all")
-	public Long deleteAll() {
-		System.out.println("<deleteAll>");
-		return locationService.deleteAll();
+	public Long deleteAll() {		
+		Long ret = locationService.deleteAll();
+		System.out.println("<deleteAll>: result count: "+ret);
+		return ret;
 	}
 
 }
