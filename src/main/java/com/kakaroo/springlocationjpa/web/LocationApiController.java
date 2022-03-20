@@ -2,8 +2,8 @@ package com.kakaroo.springlocationjpa.web;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -25,34 +25,44 @@ import lombok.RequiredArgsConstructor;
 public class LocationApiController {
 	private final LocationRepository repository;
 	private final LocationService locationService;
-	
-	@GetMapping("/")
+		
+	@GetMapping("/add")
 	public String init() {
-		Double latitude = 37.3863871;
-		Double longitude = 126.9648526;
-		for (int i = 0; i < 1; i++) {
+		Double latitude = 37.3898897;
+		Double longitude = 126.9593416;
+		String mTime = "";
+		Double reviseValueA = 0d;
+		Double reviseValueB = 0d;
+		
+		String retStr = "";
+		
+		for (int i = 0; i < 2; i++) {
 			
 			//java.sql.TimeStamp
 			SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
-			String today = formatter.format(cal.getTime());
+			Calendar cal = Calendar.getInstance();
+			Date date = cal.getTime();
+			formatter.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+			String today = formatter.format(date);
 			
 			Timestamp ts = Timestamp.valueOf(today);
 			//System.out.println("timestamp : "+ts);
 			
 			String time = ts.toString();
-			String mTime = time.substring(0, time.length()-2);
+			mTime = time.substring(0, time.length()-2);
 						
 			//LocalDateTime ldt = ts.toLocalDateTime();
 			//System.out.println("SQL type of timestamp : "+ldt);
 						
-			Double reviseValueA = (int) (Math.random()*20)*0.001;//i * 0.001;
-			Double reviseValueB = (int) (Math.random()*12)*0.001;//i * 0.002;
+			reviseValueA = (int) Math.floor(Math.random()*20) *0.0003;//i * 0.001;
+			reviseValueB = (int) Math.floor(Math.random()*12) *0.0006;//i * 0.002;
 			
-			System.out.println("<item save> time:"+mTime +", latitude:"+(latitude+reviseValueA)+", longitude:"+(longitude+reviseValueB));
+			retStr += "<item save> time:"+mTime +", latitude,longitude:"+(latitude+reviseValueA)+","+(longitude+reviseValueB)+"\n";
+						
+			System.out.println(retStr);
 			
 			repository
-					.save(LocationEntity.builder().time(mTime).latitude(latitude+reviseValueA).longitude(longitude+reviseValueB).build());
+					.save(LocationEntity.builder().userId(i).time(mTime).latitude(latitude+reviseValueA).longitude(longitude+reviseValueB).build());
 			
 			try {
 				Thread.sleep(10);
@@ -61,13 +71,14 @@ public class LocationApiController {
 				e.printStackTrace();
 			}
 		}
-		return "Default item is inserted";
+
+		return retStr;
 	}
 	
 	@PostMapping("/post")
 	public Long create(@RequestBody LocationCreateDto createDto) {
 		Long ret = locationService.create(createDto);
-		System.out.println("<post> id:"+ret +", time:"+createDto.getTime().toString() +", latitude:"+createDto.getLatitude().toString()+", longitude:"+createDto.getLongitude().toString());
+		System.out.println("<post> id:"+ret +", userId:"+createDto.getUserId() +", time:"+createDto.getTime().toString() +", latitude:"+createDto.getLatitude().toString()+", longitude:"+createDto.getLongitude().toString());
 		return ret;		
 	}
 	
@@ -76,16 +87,28 @@ public class LocationApiController {
 		return locationService.readAll();
 	}
 	
+	@GetMapping("/get/list/{id}")	//id:userId
+	public List<LocationReadDto> readAllByUserId(@PathVariable int id) {
+		return locationService.readAllByUserId(id);
+	}
+	
 	@DeleteMapping("/delete/{id}")
 	public Long delete(@PathVariable Long id) {
 		System.out.println("<delete> id:"+id);
 		return locationService.delete(id);
 	}
 	
+	@DeleteMapping("/delete/all/{id}")	//id:userId
+	public int deleteAllByUserId(@PathVariable int id) {
+		System.out.println("<deleteAllByUserId> id:"+id);
+		return locationService.deleteAllByUserId(id);
+	}
+	
 	@DeleteMapping("/delete/all")
-	public Long deleteAll() {
-		System.out.println("<deleteAll>");
-		return locationService.deleteAll();
+	public Long deleteAll() {		
+		Long ret = locationService.deleteAll();
+		System.out.println("<deleteAll>: result count: "+ret);
+		return ret;
 	}
 
 }

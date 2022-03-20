@@ -3,6 +3,9 @@ package com.kakaroo.springlocationjpa.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +20,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class LocationService {
 	
+	private final String tableName = "locations";
 	private final LocationRepository repository;
+
+	@PersistenceContext
+	private final EntityManager entityManager;
 	
 	@Transactional
 	public Long create(LocationCreateDto createDto) {
@@ -30,6 +37,12 @@ public class LocationService {
 		return list;		
 	}
 	
+	@Transactional(readOnly = true)
+	public List<LocationReadDto> readAllByUserId(int id) {
+		List<LocationReadDto> list = repository.findByUserId(id).stream().map(entity -> new LocationReadDto(entity)).collect(Collectors.toList());
+		return list;		
+	}
+	
 	@Transactional
 	public Long delete(Long id) {
 		LocationEntity entity = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("delete error!!! id: " + id));
@@ -38,8 +51,27 @@ public class LocationService {
 	}
 	
 	@Transactional
+	public int deleteAllByUserId(int userId) {
+		List<LocationEntity> entity = repository.findByUserId(userId);
+		if(entity != null) {
+			entity.forEach(item -> repository.delete(item));
+			
+			String jpql = "ALTER TABLE " + tableName +" AUTO_INCREMENT = 1";
+			entityManager.createNativeQuery(jpql).executeUpdate();
+			return entity.size();	
+		}
+		return 0;		
+	}
+	
+	@Transactional
 	public Long deleteAll() {		
 		repository.deleteAll();
-		return repository.count();
-	}
+		Long count = repository.count();
+		
+		String jpql = "ALTER TABLE " + tableName +" AUTO_INCREMENT = 1";
+		entityManager.createNativeQuery(jpql).executeUpdate();
+				
+		return count;
+	}	
+	
 }
